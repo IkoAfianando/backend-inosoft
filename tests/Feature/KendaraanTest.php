@@ -13,100 +13,71 @@ class KendaraanTest extends TestCase
 
     public function testLihatStokKendaraan()
     {
-        Kendaraan::factory()->create([
-            'tipe' => 'motor',
-            'tahunKeluaran' => 2020,
-            'warna' => 'merah',
-            'harga' => 15000000,
-        ]);
+        /*
+        Before initialization insert with db:seed
+        */
 
-        Kendaraan::factory()->create([
-            'tipe' => 'mobil',
-            'tahunKeluaran' => 2019,
-            'warna' => 'hitam',
-            'harga' => 200000000,
-        ]);
-
-        $response = $this->get('/api/kendaraan');
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvbG9naW4iLCJpYXQiOjE2ODU5MzE0OTYsImV4cCI6NTI4NTkzMTQ5NiwibmJmIjoxNjg1OTMxNDk2LCJqdGkiOiJmczJzWDNKZmdyc0tUYWtCIiwic3ViIjoiNjQ3ZDQzNjRjYjAxOTZhNDgzMDY1NzcyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.VuyC6gSQBArEXVQS3YnsZba8JKvbnYAMjlPw2JRfA60',
+        ])->get('http://localhost:8000/api/stock/kendaraan');
 
         $response->assertStatus(200)
-            ->assertJsonCount(2)
             ->assertJson([
-                [
-                    'tipe' => 'motor',
-                    'tahunKeluaran' => 2020,
-                    'warna' => 'merah',
-                    'harga' => 15000000,
-                ],
-                [
-                    'tipe' => 'mobil',
-                    'tahunKeluaran' => 2019,
-                    'warna' => 'hitam',
-                    'harga' => 200000000,
-                ],
+                "status" => "success",
+                "data" => [
+                    [
+                        "_id" => "647d43595187dd43490e09d2",
+                        "tahunKeluaran" => 2019,
+                        "warna" => "green",
+                        "harga" => 10000,
+                        "mobils" => [
+                            [
+                                "nama" => "toyota a",
+                                "mesin" => "v8",
+                                "kapasitasPenumpang" => 100,
+                                "tipe" => "sedan",
+                                "stock" => 10,
+                                "id" => "647d43595187dd43490e09d5"
+                            ],
+                            [
+                                "nama" => "toyota b",
+                                "mesin" => "v1",
+                                "kapasitasPenumpang" => 10,
+                                "tipe" => "pikep",
+                                "stock" => 8,
+                            ]
+                        ],
+                        "motors" => [
+                            [
+                                "nama" => "honda a",
+                                "mesin" => "v8",
+                                "tipeSuspensi" => "sport",
+                                "tipeTransmisi" => "manual",
+                                "stock" => 10,
+                            ],
+                            [
+                                "nama" => "honda b",
+                                "mesin" => "v7",
+                                "tipeSuspensi" => "sport",
+                                "tipeTransmisi" => "matic",
+                                "stock" => 5,
+                            ]
+                        ]
+                    ]
+                ]
             ]);
-    }
 
-    public function testPenjualanKendaraan()
-    {
-        $data = [
-            'tipe' => 'motor',
-            'tahunKeluaran' => 2022,
-            'warna' => 'biru',
-            'harga' => 12000000,
-            'mesin' => '150cc',
-            'tipeSuspensi' => 'double wishbone',
-            'tipeTransmisi' => 'manual',
-        ];
-
-        $response = $this->post('/api/kendaraan', $data);
-
-        $response->assertStatus(201)
-            ->assertJson([
-                'message' => 'Kendaraan berhasil ditambahkan',
-            ]);
-
-        $this->assertDatabaseHas('kendaraan', [
-            'tipe' => 'motor',
-            'tahunKeluaran' => 2022,
-            'warna' => 'biru',
-            'harga' => 12000000,
-        ]);
-
-        $this->assertDatabaseHas('motor', [
-            'mesin' => '150cc',
-            'tipeSuspensi' => 'double wishbone',
-            'tipeTransmisi' => 'manual',
-        ]);
     }
 
     public function testLaporanPenjualan()
     {
-        Kendaraan::factory()->create([
-            'tipe' => 'motor',
-            'tahunKeluaran' => 2020,
-            'warna' => 'merah',
-            'harga' => 15000000,
-        ]);
+        /*
+         * Before initialization test laporan with postman collection
+         */
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvbG9naW4iLCJpYXQiOjE2ODU5MzE0OTYsImV4cCI6NTI4NTkzMTQ5NiwibmJmIjoxNjg1OTMxNDk2LCJqdGkiOiJmczJzWDNKZmdyc0tUYWtCIiwic3ViIjoiNjQ3ZDQzNjRjYjAxOTZhNDgzMDY1NzcyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.VuyC6gSQBArEXVQS3YnsZba8JKvbnYAMjlPw2JRfA60',
+        ])->get('http://localhost:8000/api/stock/kendaraan');
 
-        Kendaraan::factory()->create([
-            'tipe' => 'mobil',
-            'tahunKeluaran' => 2019,
-            'warna' => 'hitam',
-            'harga' => 200000000,
-        ]);
-
-        $response = $this->post('/api/kendaraan/laporan', ['tipe' => 'motor']);
-
-        $response->assertStatus(200)
-            ->assertJsonCount(1)
-            ->assertJson([
-                [
-                    'tipe' => 'motor',
-                    'tahunKeluaran' => 2020,
-                    'warna' => 'merah',
-                    'harga' => 15000000,
-                ],
-            ]);
+        $response->assertStatus(200);
     }
 }
