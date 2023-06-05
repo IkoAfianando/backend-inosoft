@@ -2,14 +2,17 @@
 namespace App\Services;
 
 use App\Repositories\MobilRepository;
+use App\Repositories\SaleRepository;
 
 class MobilService
 {
     protected $mobilRepository;
+    protected $saleRepository;
 
-    public function __construct(MobilRepository $mobilRepository)
+    public function __construct(MobilRepository $mobilRepository, SaleRepository $saleRepository)
     {
         $this->mobilRepository = $mobilRepository;
+        $this->saleRepository = $saleRepository;
     }
 
 
@@ -28,7 +31,15 @@ class MobilService
 
         $this->mobilRepository->decrementStock($mobilId);
 
+        $this->saleRepository->create([
+            'mobilId' => $mobilId,
+            'harga' => $this->mobilRepository->cekHarga($mobilId),
+            'nama' => $this->mobilRepository->find($mobilId)->nama,
+            'mesin' => $this->mobilRepository->find($mobilId)->mesin,
+        ]);
 
-        return $mobil;
+        return $this->mobilRepository->find($mobilId);
     }
+
+
 }

@@ -17,9 +17,14 @@ class MotorController extends Controller
     public function penjualan(Request $request)
     {
         try {
-            $kendaraan = $this->motorService->jualMotor($request->mobilId);
+            $motor = $this->motorService->jualMotor($request->id);
 
-            return response()->json($kendaraan);
+            $data = [
+                'status' => 'success',
+                'data'=> $motor
+            ];
+
+            return response()->json($data);
 
         }catch(\Exception $e) {
             return response()->json([
@@ -28,8 +33,4 @@ class MotorController extends Controller
         }
     }
 
-    public function laporanPenjualan(Request $request)
-    {
-
-    }
 }

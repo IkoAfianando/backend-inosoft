@@ -2,34 +2,43 @@
 namespace App\Services;
 
 use App\Repositories\MotorRepository;
-use App\RepositoriesMotorRepository;
+use App\Repositories\SaleRepository;
+
 
 class MotorService
 {
     protected $motorRepository;
+    protected $saleRepository;
 
-    public function __construct(MotorRepository $motorRepository)
+    public function __construct(MotorRepository $motorRepository, SaleRepository $saleRepository)
     {
         $this->motorRepository = $motorRepository;
+        $this->saleRepository = $saleRepository;
     }
 
 
-    public function jualMotor($mobilId)
+    public function jualMotor($motorId)
     {
 
-        $mobil = $this->motorRepository->find($mobilId);
+        $motor = $this->motorRepository->find($motorId);
 
-        if (!$mobil) {
-            throw new \Exception("Mobil tidak ditemukan");
+        if (!$motor) {
+            throw new \Exception("Motor tidak ditemukan");
         }
 
-        if ($mobil->stock <= 0) {
-            throw new \Exception("Stok mobil habis");
+        if ($motor->stock <= 0) {
+            throw new \Exception("Stok motor habis");
         }
 
-        $this->motorRepository->decrementStock($mobilId);
+        $this->motorRepository->decrementStock($motorId);
 
+        $this->saleRepository->create([
+            'motorId' => $motorId,
+            'harga' => $this->motorRepository->cekHarga($motorId),
+            'nama' => $this->motorRepository->find($motorId)->nama,
+            'mesin' => $this->motorRepository->find($motorId)->mesin,
+        ]);
 
-        return $mobil;
+        return $this->motorRepository->find($motorId);
     }
 }

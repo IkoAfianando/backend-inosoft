@@ -17,9 +17,15 @@ class MobilController extends Controller
     public function penjualan(Request $request)
     {
         try {
-            $kendaraan = $this->mobilService->jualMobil($request->mobilId);
+            // request parameter
+            $mobil = $this->mobilService->jualMobil($request->id);
 
-            return response()->json($kendaraan);
+            $data = [
+                'status' => 'success',
+                'data'=> $mobil
+            ];
+
+            return response()->json($data);
 
         }catch(\Exception $e) {
             return response()->json([

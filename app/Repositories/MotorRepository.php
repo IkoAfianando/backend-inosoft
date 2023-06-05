@@ -2,8 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Models\Kendaraan;
 use App\Models\Motor;
-use MongoDB\BSON\ObjectId;
+
 
 class MotorRepository
 {
@@ -16,5 +17,13 @@ class MotorRepository
     public function decrementStock($id)
     {
         return Motor::where('_id', $id)->decrement('stock');
+    }
+
+    public function cekHarga($id)
+    {
+        $kendaraanId = Motor::where('_id', $id)->first()->kendaraanId;
+        $harga = Kendaraan::where('_id', $kendaraanId)->first()->harga;
+
+        return $harga;
     }
 }
